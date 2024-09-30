@@ -1,45 +1,45 @@
-import { useState } from 'react'
+import { useState } from "react";
 
 const Blog = ({ blog, updateBlog, deleteBlog, canUserDelete }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: 'solid',
+    border: "solid",
     borderWidth: 1,
-    marginBottom: 5
-  }
+    marginBottom: 5,
+  };
 
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
 
-  const hideWhenVisible = { display: visible ? 'none' : '' }
-  const showWhenVisible = { display: visible ? '' : 'none' }
+  const hideWhenVisible = { display: visible ? "none" : "" };
+  const showWhenVisible = { display: visible ? "" : "none" };
 
   const toggleVisibility = () => {
-    setVisible(!visible)
-  }
+    setVisible(!visible);
+  };
 
   const addLikes = () => {
     updateBlog({
       ...blog,
-      likes: blog.likes + 1
-    })
-  }
+      likes: blog.likes + 1,
+    });
+  };
 
   const removeBlog = () => {
     deleteBlog({
       title: blog.title,
       author: blog.author,
       id: blog.id,
-      user: blog.user
-    })
-  }
+      user: blog.user,
+    });
+  };
 
   const removeBtn = () => {
-    return <button onClick={removeBlog}>remove</button>
-  }
+    return <button onClick={removeBlog}>remove</button>;
+  };
 
   return (
-    <div className='blog' style={blogStyle}>
+    <div className="blog" style={blogStyle}>
       <div style={hideWhenVisible}>
         {blog.title} {blog.author}
         <button onClick={() => toggleVisibility}>view</button>
@@ -53,9 +53,9 @@ const Blog = ({ blog, updateBlog, deleteBlog, canUserDelete }) => {
         <br />
         {blog.author}
         <br />
-        {canUserDelete &&
-        removeBtn()}
+        {canUserDelete && removeBtn()}
       </div>
     </div>
-  )}
-export default Blog
+  );
+};
+export default Blog;
