@@ -7,23 +7,24 @@ import blogService from "./services/blogs";
 import loginService from "./services/login";
 import "../index.css";
 
+import {setNotification} from './reducers/notificationReducer'
+import { useDispatch } from "react-redux";
+
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
 
   const BlogFormRef = useRef();
 
+  const dispatch = useDispatch()
+
+
   useEffect(() => {
-    blogService.getAll().then((blogs) =>
-      setBlogs(
-        blogs.sort((a, b) => {
-          return b.likes - a.likes;
-        }),
-      ),
-    );
+    blogService.getAll().then((blogs) => {
+      setBlogs(blogs)
+    })
   }, []);
 
   useEffect(() => {
@@ -49,10 +50,7 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setErrorMessage("Wrong Username or Password");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      dispatch(setNotification("Wrong Username or Password", 5));
     }
   };
 
@@ -67,14 +65,13 @@ const App = () => {
     BlogFormRef.current.toggleVisibility();
     blogService.create(blogObject).then((returnedBlog) => {
       setBlogs(blogs.concat(returnedBlog));
-      setErrorMessage(
-        `a new blog ${blogObject.title} by ${blogObject.author} added`,
-      );
+      dispatch(setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`, 5))
     });
   };
 
   const updateBlog = (updateObject) => {
     blogService.update(updateObject.id, updateObject).then((returnedBlog) => {
+      console.log(returnedBlog)
       setBlogs(
         blogs.map((blog) =>
           blog.id !== returnedBlog.id ? blog : returnedBlog,
@@ -94,10 +91,14 @@ const App = () => {
     }
   };
 
+  const rankLikes = (a, b) => {
+    return b.likes - a.likes;
+  }
+
   if (user === null) {
     return (
       <div>
-        <Notification message={errorMessage} type="error" />
+        <Notification/>
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -127,7 +128,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={errorMessage} type="success" />
+      <Notification/>
       <p>
         {user.name} logged-in <button onClick={handleLogOut}>logout</button>
       </p>
@@ -135,7 +136,7 @@ const App = () => {
         <BlogForm createBlog={addBlog} />
       </Togglable>
       <br />
-      {blogs.map((blog) => (
+      {blogs.sort(rankLikes).map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}

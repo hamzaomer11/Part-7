@@ -34,15 +34,11 @@ const Blog = ({ blog, updateBlog, deleteBlog, canUserDelete }) => {
     });
   };
 
-  const removeBtn = () => {
-    return <button onClick={removeBlog}>remove</button>;
-  };
-
   return (
     <div className="blog" style={blogStyle}>
       <div style={hideWhenVisible}>
         {blog.title} {blog.author}
-        <button onClick={() => toggleVisibility}>view</button>
+        <button onClick={toggleVisibility}>view</button>
       </div>
       <div style={showWhenVisible}>
         {blog.title} <button onClick={toggleVisibility}>hide</button>
@@ -53,7 +49,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, canUserDelete }) => {
         <br />
         {blog.author}
         <br />
-        {canUserDelete && removeBtn()}
+        {canUserDelete && <button onClick={removeBlog}>remove</button>}
       </div>
     </div>
   );
