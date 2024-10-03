@@ -25,7 +25,7 @@ const App = () => {
     blogService.getAll().then((blogs) => {
       setBlogs(blogs)
     })
-  }, [blogs]);
+  }, []);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -69,15 +69,10 @@ const App = () => {
     });
   };
 
-  const updateBlog = (updateObject) => {
-    blogService.update(updateObject.id, updateObject).then((returnedBlog) => {
-      console.log(returnedBlog)
-      setBlogs(
-        blogs.map((blog) =>
-          blog.id !== returnedBlog.id ? blog : returnedBlog,
-        ),
-      );
-    });
+  const updateBlog = async (updateObject) => {
+    await blogService.update(updateObject.id, updateObject)
+      console.log(updateObject)
+      setBlogs(blogs.map((blog) => blog.id !== updateObject.id ? blog : updateObject));
   };
 
   const deleteBlog = (deleteObject) => {
