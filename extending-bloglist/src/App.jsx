@@ -21,8 +21,7 @@ const App = () => {
   const BlogFormRef = useRef();
 
   const dispatch = useDispatch()
-  const allBlogs = useSelector(state => state)
-  console.log(typeof allBlogs)
+  const allBlogs = useSelector(state => state.blogs)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -132,7 +131,7 @@ const App = () => {
         <BlogForm createBlog={addBlog} />
       </Togglable>
       <br />
-      {allBlogs.sort(rankLikes).map((blog) => (
+      {[...allBlogs].sort(rankLikes).map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}
