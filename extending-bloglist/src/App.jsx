@@ -8,7 +8,7 @@ import loginService from "./services/login";
 import "../index.css";
 
 import {setNotification} from './reducers/notificationReducer'
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { initializeBlogs } from "./reducers/blogReducer";
 
@@ -21,6 +21,8 @@ const App = () => {
   const BlogFormRef = useRef();
 
   const dispatch = useDispatch()
+  const allBlogs = useSelector(state => state)
+  console.log(typeof allBlogs)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -130,7 +132,7 @@ const App = () => {
         <BlogForm createBlog={addBlog} />
       </Togglable>
       <br />
-      {blogs.sort(rankLikes).map((blog) => (
+      {allBlogs.sort(rankLikes).map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}
