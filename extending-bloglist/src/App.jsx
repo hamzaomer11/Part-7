@@ -10,6 +10,8 @@ import "../index.css";
 import {setNotification} from './reducers/notificationReducer'
 import { useDispatch } from "react-redux";
 
+import { initializeBlogs } from "./reducers/blogReducer";
+
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
@@ -20,11 +22,8 @@ const App = () => {
 
   const dispatch = useDispatch()
 
-
   useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      setBlogs(blogs)
-    })
+    dispatch(initializeBlogs())
   }, []);
 
   useEffect(() => {
