@@ -10,7 +10,7 @@ import "../index.css";
 import {setNotification} from './reducers/notificationReducer'
 import { useDispatch, useSelector } from "react-redux";
 
-import { initializeBlogs } from "./reducers/blogReducer";
+import { initializeBlogs, createBlog } from "./reducers/blogReducer";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -63,10 +63,8 @@ const App = () => {
 
   const addBlog = (blogObject) => {
     BlogFormRef.current.toggleVisibility();
-    blogService.create(blogObject).then((returnedBlog) => {
-      setBlogs(blogs.concat(returnedBlog));
-      dispatch(setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`, 5))
-    });
+    dispatch(createBlog(blogObject))
+    dispatch(setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`, 5))
   };
 
   const updateBlog = async (updateObject) => {
