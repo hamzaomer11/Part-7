@@ -10,10 +10,9 @@ import "../index.css";
 import {setNotification} from './reducers/notificationReducer'
 import { useDispatch, useSelector } from "react-redux";
 
-import { initializeBlogs, createBlog } from "./reducers/blogReducer";
+import { initializeBlogs, createBlog, updateVote, deletingBlog } from "./reducers/blogReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
@@ -21,7 +20,7 @@ const App = () => {
   const BlogFormRef = useRef();
 
   const dispatch = useDispatch()
-  const allBlogs = useSelector(state => state.blogs)
+  const blogs = useSelector(state => state.blogs)
 
   useEffect(() => {
     dispatch(initializeBlogs())
@@ -67,10 +66,8 @@ const App = () => {
     dispatch(setNotification(`a new blog ${blogObject.title} by ${blogObject.author} added`, 5))
   };
 
-  const updateBlog = async (updateObject) => {
-    await blogService.update(updateObject.id, updateObject)
-      console.log(updateObject)
-      setBlogs(blogs.map((blog) => blog.id !== updateObject.id ? blog : updateObject));
+  const updateBlog = (updateObject) => {
+    dispatch(updateVote(updateObject.id))
   };
 
   const deleteBlog = (deleteObject) => {
@@ -78,13 +75,11 @@ const App = () => {
       `Remove blog ${deleteObject.title} by ${deleteObject.author}?`,
     );
     if (ok) {
-      blogService.remove(deleteObject.id).then(() => {
-        setBlogs(blogs.filter((blog) => blog.id !== deleteObject.id));
-      });
+      dispatch(deletingBlog(deleteObject.id))
     }
   };
 
-  const rankLikes = (a, b) => {
+  const rankByLikes = (a, b) => {
     return b.likes - a.likes;
   }
 
@@ -129,13 +124,13 @@ const App = () => {
         <BlogForm createBlog={addBlog} />
       </Togglable>
       <br />
-      {[...allBlogs].sort(rankLikes).map((blog) => (
+      {[...blogs].sort(rankByLikes).map((blog) => (
         <Blog
           key={blog.id}
           blog={blog}
           updateBlog={updateBlog}
           deleteBlog={deleteBlog}
-          canUserDelete={user.username === blog.user.username}
+          canUserDelete={user.username === blog.user?.username}
         />
       ))}
     </div>

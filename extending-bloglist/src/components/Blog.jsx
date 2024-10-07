@@ -34,6 +34,10 @@ const Blog = ({ blog, updateBlog, deleteBlog, canUserDelete }) => {
     });
   };
 
+  const removeBtn = () => {
+    return <button onClick={removeBlog}>remove</button>
+  }
+
   return (
     <div className="blog" style={blogStyle}>
       <div style={hideWhenVisible}>
@@ -49,7 +53,7 @@ const Blog = ({ blog, updateBlog, deleteBlog, canUserDelete }) => {
         <br />
         {blog.author}
         <br />
-        {canUserDelete && <button onClick={removeBlog}>remove</button>}
+        {canUserDelete && removeBtn()}
       </div>
     </div>
   );
