@@ -130,7 +130,7 @@ const App = () => {
           blog={blog}
           updateBlog={updateBlog}
           deleteBlog={deleteBlog}
-          canUserDelete={user.username === blog.user?.username}
+          canUserDelete={user.username === blog.user.username}
         />
       ))}
     </div>
