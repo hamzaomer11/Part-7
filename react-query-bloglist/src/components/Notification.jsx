@@ -1,11 +1,22 @@
-const Notification = ({ message, type }) => {
-  if (message === null) {
-    return null
+import { useNotificationValue } from "../NotificationContext"
+
+const Notification = () => {
+  const style = {
+    border: 'solid',
+    padding: 10,
+    borderWidth: 1,
+    marginBottom: 5
   }
 
+  const notification = useNotificationValue()
+
+  if(notification === '') {
+    return null
+  }
+ 
   return (
-    <div className={type}>
-      {message}
+    <div style={notification === null ? {display: 'none'} : style}>
+      {notification}
     </div>
   )
 }
