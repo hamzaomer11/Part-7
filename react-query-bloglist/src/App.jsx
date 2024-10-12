@@ -7,9 +7,12 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import '../index.css'
 import { useNotificationDispatch } from './NotificationContext'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+
+
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  /* const [blogs, setBlogs] = useState([]) */
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -17,12 +20,14 @@ const App = () => {
   const BlogFormRef = useRef()
 
   const notificationDispatch = useNotificationDispatch()
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
-  }, [])
+  const newBlogMutation = useMutation({
+      mutationFn: blogService.create,
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      }
+    })
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -72,10 +77,7 @@ const App = () => {
 
   const addBlog = (blogObject) => {
     BlogFormRef.current.toggleVisibility()
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
+    newBlogMutation.mutate(blogObject)
         notificationDispatch({
           type: 'SHOW-NOTIFICATION',
           payload: `a new blog ${blogObject.title} by ${blogObject.author} added`
@@ -86,7 +88,6 @@ const App = () => {
             payload: ''
           })
         , 5000)
-      })
   }
 
   const updateBlog = (updateObject) => {
@@ -108,6 +109,19 @@ const App = () => {
         })
     }
   }
+
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll,
+    refetchOnWindowFocus: false
+  })
+  console.log(JSON.parse(JSON.stringify(result)))
+
+  if ( result.isLoading ) {
+    return <div>loading data...</div>
+  }
+
+  const blogs = result.data
 
   const rankByLikes = (a, b) => {
     return b.likes - a.likes;
