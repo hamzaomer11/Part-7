@@ -24,10 +24,25 @@ const App = () => {
 
   const newBlogMutation = useMutation({
       mutationFn: blogService.create,
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      onSuccess: (newObject) => {
+        const blogs = queryClient.getQueryData(['blogs'])
+        queryClient.setQueryData(['blogs'], blogs.concat(newObject))
       }
-    })
+  })
+
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.update,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+    }
+  })
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.remove,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+    }
+  })
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -91,22 +106,13 @@ const App = () => {
   }
 
   const updateBlog = (updateObject) => {
-    blogService
-      .update(updateObject.id, updateObject)
-      .then(returnedBlog => {
-        console.log(returnedBlog)
-        setBlogs(blogs.map(blog => blog.id !== updateObject.id ? blog : updateObject))
-      })
+    updateBlogMutation.mutate(updateObject)
   }
 
   const deleteBlog = (deleteObject) => {
     const ok = window.confirm(`Remove blog ${deleteObject.title} by ${deleteObject.author}?`)
     if (ok) {
-      blogService
-        .remove(deleteObject.id)
-        .then(() => {
-          setBlogs(blogs.filter(blog => blog.id !== deleteObject.id))
-        })
+      deleteBlogMutation.mutate(deleteObject)
     }
   }
 
