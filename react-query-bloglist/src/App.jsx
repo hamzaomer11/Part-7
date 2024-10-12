@@ -8,18 +8,17 @@ import loginService from './services/login'
 import '../index.css'
 import { useNotificationDispatch } from './NotificationContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-
-
+import { useUserDispatch, useUserValue } from './UserContext'
 
 const App = () => {
-  /* const [blogs, setBlogs] = useState([]) */
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  const userValue = useUserValue()
 
   const BlogFormRef = useRef()
 
   const notificationDispatch = useNotificationDispatch()
+  const userDispatch = useUserDispatch()
   const queryClient = useQueryClient()
 
   const newBlogMutation = useMutation({
@@ -48,7 +47,10 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      userDispatch({
+        type: 'SETLOGINSTATE',
+        payload: user
+      })
       blogService.setToken(user.token)
     }
   }, [])
@@ -64,7 +66,10 @@ const App = () => {
         'loggedBlogappUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
-      setUser(user)
+      userDispatch({
+        type: 'SETLOGINSTATE',
+        payload: user
+      })
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -83,9 +88,12 @@ const App = () => {
 
   const handleLogOut = () => {
     window.localStorage.removeItem(
-      'loggedBlogappUser', JSON.stringify(user)
+      'loggedBlogappUser', JSON.stringify(userValue)
     )
-    setUser(null)
+    userDispatch({
+      type: 'SETLOGINSTATE',
+      payload: null
+    })
     setUsername('')
     setPassword('')
   }
@@ -133,7 +141,7 @@ const App = () => {
     return b.likes - a.likes;
   }
 
-  if (user === null) {
+  if (userValue === null) {
     return (
       <div>
         <Notification/>
@@ -168,14 +176,14 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification/>
-      <p>{user.name} logged-in <button onClick={handleLogOut}>logout</button></p>
+      <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
       <Togglable buttonLabel="new blog" ref={BlogFormRef}>
         <BlogForm createBlog={addBlog}/>
       </Togglable>
       <br />
       {blogs.sort(rankByLikes).map(blog =>
         <Blog key={blog.id} blog={blog} updateBlog={updateBlog}
-          deleteBlog={deleteBlog} canUserDelete={user.username === blog.user.username} />
+          deleteBlog={deleteBlog} canUserDelete={userValue.username === blog.user.username} />
       )}
     </div>
   )
