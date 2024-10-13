@@ -3,16 +3,36 @@ import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import UserView from './components/UserView'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import axios from 'axios'
 import '../index.css'
 import { useNotificationDispatch } from './NotificationContext'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUserDispatch, useUserValue } from './UserContext'
 
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link
+} from 'react-router-dom'
+
+const Menu = () => {
+  const padding = {
+    paddingRight: 5
+  }
+  return (
+    <div>
+      <Link style={padding} to="/">home</Link>
+      <Link style={padding} to="/users">users</Link>
+    </div>
+  )
+}
+
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [users, setUsers] = useState()
   const userValue = useUserValue()
 
   const BlogFormRef = useRef()
@@ -20,6 +40,18 @@ const App = () => {
   const notificationDispatch = useNotificationDispatch()
   const userDispatch = useUserDispatch()
   const queryClient = useQueryClient()
+
+  const getUsers = async () => {
+    const baseUrl = "/api/users"
+    const response = await axios.get(baseUrl)
+    const users = response.data
+    setUsers(users)
+  }
+
+  useEffect(() => {
+    getUsers()
+  }, [])
+
 
   const newBlogMutation = useMutation({
       mutationFn: blogService.create,
@@ -170,23 +202,42 @@ const App = () => {
         </form>
       </div>
     )
+  } else {
+    return (
+      <div>
+        <Router>
+          <Menu/>
+          <Routes>
+            <Route path="/users" element={
+              <div>
+                <h2>blogs</h2>
+                <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p> 
+                <UserView users={users}/> 
+              </div>
+            }/>
+            <Route path='/' element={
+              <div>
+                <h2>blogs</h2>
+                <Notification/>
+                <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
+                <Togglable buttonLabel="new blog" ref={BlogFormRef}>
+                  <BlogForm createBlog={addBlog}/>
+                </Togglable>
+                <br />
+                {blogs.sort(rankByLikes).map(blog =>
+                  <Blog key={blog.id} blog={blog} updateBlog={updateBlog}
+                    deleteBlog={deleteBlog} canUserDelete={userValue.username === blog.user.username} />
+                )}
+              </div>
+            }/>
+          </Routes>
+          
+        </Router>
+      </div>
+    )
   }
 
-  return (
-    <div>
-      <h2>blogs</h2>
-      <Notification/>
-      <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
-      <Togglable buttonLabel="new blog" ref={BlogFormRef}>
-        <BlogForm createBlog={addBlog}/>
-      </Togglable>
-      <br />
-      {blogs.sort(rankByLikes).map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={updateBlog}
-          deleteBlog={deleteBlog} canUserDelete={userValue.username === blog.user.username} />
-      )}
-    </div>
-  )
+  
 
 }
 
