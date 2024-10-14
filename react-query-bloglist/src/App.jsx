@@ -4,6 +4,7 @@ import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import UserView from './components/UserView'
+import User from './components/User'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import axios from 'axios'
@@ -230,8 +231,14 @@ const App = () => {
                 )}
               </div>
             }/>
+            <Route path='/users/:id' element={
+              <div>
+                <h2>blogs</h2>
+                <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
+                <User users={users}/>
+              </div>
+            }/>
           </Routes>
-          
         </Router>
       </div>
     )
