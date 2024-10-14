@@ -174,6 +174,12 @@ const App = () => {
     return b.likes - a.likes;
   }
 
+  const blogStyle = {
+    border: 'solid',
+    paddingLeft: 5,
+    marginBottom: 5
+  }
+
   if (userValue === null) {
     return (
       <div>
@@ -225,10 +231,11 @@ const App = () => {
                   <BlogForm createBlog={addBlog}/>
                 </Togglable>
                 <br />
-                {blogs.sort(rankByLikes).map(blog =>
-                  <Blog key={blog.id} blog={blog} updateBlog={updateBlog}
-                    deleteBlog={deleteBlog} canUserDelete={userValue.username === blog.user.username} />
-                )}
+                  {blogs.sort(rankByLikes).map(blog => 
+                      <div key={blog.id} style={blogStyle}>
+                        <Link to={`/blogs/${blog.id}`}><p>{blog.title}</p></Link>
+                      </div>
+                  )}
               </div>
             }/>
             <Route path='/users/:id' element={
@@ -236,6 +243,14 @@ const App = () => {
                 <h2>blogs</h2>
                 <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
                 <User users={users}/>
+              </div>
+            }/>
+            <Route path='/blogs/:id' element={
+              <div>
+                <h2>blogs</h2>
+                <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
+                <Blog key={blogs.id} blogs={blogs} updateBlog={updateBlog}
+                  deleteBlog={deleteBlog} user={userValue} />
               </div>
             }/>
           </Routes>

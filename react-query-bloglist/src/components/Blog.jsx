@@ -1,21 +1,18 @@
-import { useState } from 'react'
+import { useParams } from "react-router-dom"
 
-const Blog = ({ blog, updateBlog, deleteBlog, canUserDelete }) => {
+const Blog = ({ blogs, updateBlog, deleteBlog, user }) => {
+
+  if(!blogs) {
+    return null
+  }
+
+  const id = useParams().id
+  const blog = blogs.find(b => b.id === id)
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
     marginBottom: 5
-  }
-
-  const [visible, setVisible] = useState(false)
-
-  const hideWhenVisible = { display: visible ? 'none' : '' }
-  const showWhenVisible = { display: visible ? '' : 'none' }
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
   }
 
   const addLikes = () => {
@@ -40,22 +37,21 @@ const Blog = ({ blog, updateBlog, deleteBlog, canUserDelete }) => {
 
   return (
     <div className='blog' style={blogStyle}>
-      <div style={hideWhenVisible}>
-        {blog.title} {blog.author}
-        <button onClick={toggleVisibility}>view</button>
+      <div>
+        <h2>{blog.title}</h2>
       </div>
-      <div style={showWhenVisible}>
-        {blog.title} <button onClick={toggleVisibility}>hide</button>
-        <br />
+      <div>
         {blog.url}
         <br />
         {blog.likes} <button onClick={addLikes}>like</button>
         <br />
-        {blog.author}
+        added by {blog.user.username}
         <br />
-        {canUserDelete &&
-        removeBtn()}
+        {blog.user.username === user.username && (
+          removeBtn()
+        )}
       </div>
     </div>
-  )}
+  )
+}
 export default Blog

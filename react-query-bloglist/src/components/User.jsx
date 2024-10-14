@@ -11,8 +11,8 @@ const User = ({users}) => {
   
     return (
         <div>
-            <strong>{user.name}</strong>
-                <h2>added blogs</h2>
+            <h2>{user.name}</h2>
+                <h3>added blogs</h3>
                 {user && (
                     <ul>
                         {user.blogs.map(blog => 
