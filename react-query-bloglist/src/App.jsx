@@ -18,14 +18,25 @@ import {
   Routes, Route, Link
 } from 'react-router-dom'
 
-const Menu = () => {
+const Menu = ({userValue, handleLogOut}) => {
   const padding = {
     paddingRight: 5
   }
+
+  const menuStyling = {
+    display: 'inline-block',
+  }
+
+  const menuDivStyling = {
+    backgroundColor: 'grey',
+    paddingLeft: 5,
+  }
+
   return (
-    <div>
-      <Link style={padding} to="/">home</Link>
+    <div style={menuDivStyling}>
+      <Link style={padding} to="/">blogs</Link>
       <Link style={padding} to="/users">users</Link>
+      <p style={menuStyling}>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
     </div>
   )
 }
@@ -213,12 +224,11 @@ const App = () => {
     return (
       <div>
         <Router>
-          <Menu/>
+          <Menu userValue={userValue} handleLogOut={handleLogOut}/>
           <Routes>
             <Route path="/users" element={
               <div>
-                <h2>blogs</h2>
-                <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p> 
+                <h2>blogs</h2> 
                 <UserView users={users}/> 
               </div>
             }/>
@@ -226,7 +236,6 @@ const App = () => {
               <div>
                 <h2>blogs</h2>
                 <Notification/>
-                <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
                 <Togglable buttonLabel="new blog" ref={BlogFormRef}>
                   <BlogForm createBlog={addBlog}/>
                 </Togglable>
@@ -241,14 +250,12 @@ const App = () => {
             <Route path='/users/:id' element={
               <div>
                 <h2>blogs</h2>
-                <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
                 <User users={users}/>
               </div>
             }/>
             <Route path='/blogs/:id' element={
               <div>
                 <h2>blogs</h2>
-                <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
                 <Blog key={blogs.id} blogs={blogs} updateBlog={updateBlog}
                   deleteBlog={deleteBlog} user={userValue} />
               </div>
