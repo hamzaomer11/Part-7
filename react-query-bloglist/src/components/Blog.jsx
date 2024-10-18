@@ -8,6 +8,7 @@ const Blog = ({ blogs, updateBlog, deleteBlog, user }) => {
 
   const id = useParams().id
   const blog = blogs.find(b => b.id === id)
+  console.log(blog)
 
   const blogStyle = {
     paddingTop: 10,
@@ -50,6 +51,18 @@ const Blog = ({ blogs, updateBlog, deleteBlog, user }) => {
         {blog.user.username === user.username && (
           removeBtn()
         )}
+      </div>
+      <div>
+        <h3>comments</h3>
+      </div>
+      <div>
+        <ul>
+        {blog.comments.map(b => 
+          <li key={b.id}>
+            {b.content}
+          </li>
+        )}
+        </ul>
       </div>
     </div>
   )

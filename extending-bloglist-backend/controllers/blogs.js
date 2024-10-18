@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const Comment = require('../models/comment')
 require('express-async-errors')
 const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
@@ -7,7 +8,7 @@ const middleware = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => { 
   const blogs = await Blog
-    .find({}).populate('user', { username: 1, name: 1 })
+    .find({}).populate('user', { username: 1, name: 1 }).populate('comments', { content: 1 })
   response.json(blogs)
 })
   
@@ -46,6 +47,27 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     await user.save()
     response.status(201).json(savedBlog)
   }
+})
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const blogId = request.params.id
+  const body = request.body
+
+  const blog = await Blog.findById(blogId)
+  if (!blog) {
+    response.status(404).json({ error: 'Blog not found' })
+  }
+
+  const comment = new Comment({
+      content: body.content,
+      blog: blog._id,
+  })
+
+  const savedComment = await comment.save()
+  blog.comments = blog.comments.concat(savedComment._id)
+  await blog.save()
+
+  response.status(201).json(savedComment)
 })
 
 blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
