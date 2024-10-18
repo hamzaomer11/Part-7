@@ -1,6 +1,9 @@
+import { useState } from "react"
 import { useParams } from "react-router-dom"
 
-const Blog = ({ blogs, updateBlog, deleteBlog, user }) => {
+const Blog = ({ blogs, updateBlog, deleteBlog, user, addComment }) => {
+
+  const [addNewComment, setNewComment] = useState('')
 
   if(!blogs) {
     return null
@@ -32,6 +35,15 @@ const Blog = ({ blogs, updateBlog, deleteBlog, user }) => {
     })
   }
 
+  const newComment = (event) => {
+    event.preventDefault()
+    addComment({
+      ...blog,
+      content: addNewComment 
+    })
+    setNewComment('')
+  }
+
   const removeBtn = () => {
     return <button onClick={removeBlog}>remove</button>
   }
@@ -55,6 +67,16 @@ const Blog = ({ blogs, updateBlog, deleteBlog, user }) => {
       <div>
         <h3>comments</h3>
       </div>
+      <form onSubmit={newComment}>
+        <div>
+          <input
+            value={addNewComment}
+            onChange={event => setNewComment(event.target.value)}
+            placeholder='add new comment'
+          />
+          <button type="submit" >add comment</button>
+        </div>
+      </form>
       <div>
         <ul>
         {blog.comments.map(b => 

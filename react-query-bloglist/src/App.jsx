@@ -73,6 +73,13 @@ const App = () => {
       }
   })
 
+  const newCommentMutation = useMutation({
+    mutationFn: blogService.addComment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+    }
+  })
+
   const updateBlogMutation = useMutation({
     mutationFn: blogService.update,
     onSuccess: () => {
@@ -155,6 +162,10 @@ const App = () => {
             payload: ''
           })
         , 5000)
+  }
+
+  const addComment = (blogObject) => {
+    newCommentMutation.mutate(blogObject)
   }
 
   const updateBlog = (updateObject) => {
@@ -257,7 +268,7 @@ const App = () => {
               <div>
                 <h2>blogs</h2>
                 <Blog key={blogs.id} blogs={blogs} updateBlog={updateBlog}
-                  deleteBlog={deleteBlog} user={userValue} />
+                  deleteBlog={deleteBlog} user={userValue} addComment={addComment}/>
               </div>
             }/>
           </Routes>
