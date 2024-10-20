@@ -25,10 +25,6 @@ const Menu = ({userValue, handleLogOut}) => {
     paddingRight: 5
   }
 
-  const menuStyling = {
-    display: 'inline-block',
-  }
-
   const menuDivStyling = {
     paddingLeft: 5,
   }
@@ -44,7 +40,7 @@ const Menu = ({userValue, handleLogOut}) => {
             <Link style={padding} to="/users">users</Link>
           </Menubar.Trigger>
           <Menubar.Trigger className="MenubarTrigger" asChild>
-            <p style={menuStyling}>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
+            <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
           </Menubar.Trigger>
         </Menubar.Menu>
       </Menubar.Root>
