@@ -18,6 +18,8 @@ import {
   Routes, Route, Link
 } from 'react-router-dom'
 
+import * as Menubar from "@radix-ui/react-menubar";
+
 const Menu = ({userValue, handleLogOut}) => {
   const padding = {
     paddingRight: 5
@@ -28,15 +30,24 @@ const Menu = ({userValue, handleLogOut}) => {
   }
 
   const menuDivStyling = {
-    backgroundColor: 'grey',
     paddingLeft: 5,
   }
 
   return (
     <div style={menuDivStyling}>
-      <Link style={padding} to="/">blogs</Link>
-      <Link style={padding} to="/users">users</Link>
-      <p style={menuStyling}>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
+      <Menubar.Root className="MenubarRoot">
+        <Menubar.Menu>
+          <Menubar.Trigger className="MenubarTrigger" asChild>
+            <Link style={padding} to="/">blogs</Link>
+          </Menubar.Trigger>
+          <Menubar.Trigger className="MenubarTrigger" asChild>
+            <Link style={padding} to="/users">users</Link>
+          </Menubar.Trigger>
+          <Menubar.Trigger className="MenubarTrigger" asChild>
+            <p style={menuStyling}>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
+          </Menubar.Trigger>
+        </Menubar.Menu>
+      </Menubar.Root>
     </div>
   )
 }
