@@ -40,7 +40,8 @@ const Menu = ({userValue, handleLogOut}) => {
             <Link style={padding} to="/users">users</Link>
           </Menubar.Trigger>
           <Menubar.Trigger className="MenubarTrigger" asChild>
-            <p>{userValue.name} logged-in <button onClick={handleLogOut}>logout</button></p>
+            <p>{userValue.name} logged-in <button 
+            className='btnStyle'  onClick={handleLogOut}>logout</button></p>
           </Menubar.Trigger>
         </Menubar.Menu>
       </Menubar.Root>
